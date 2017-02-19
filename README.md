@@ -9,6 +9,12 @@
 [![Version](https://img.shields.io/npm/v/modern-logger.svg)](https://www.npmjs.com/package/modern-logger)
 [![Downloads](https://img.shields.io/npm/dt/modern-logger.svg)](https://www.npmjs.com/package/modern-logger) 
 
+### Features
+* Uses [Winston](https://github.com/winstonjs/winston) logging library under the hood
+* Enable [Rollbar](https://rollbar.com) error tracking service as a transport from the environment :white_check_mark: 
+* Pick between [1341](https://raw.githubusercontent.com/omnidan/node-emoji/master/lib/emoji.json) emojis from [node-emoji](https://github.com/omnidan/node-emoji/) to give a little bit of more life to your logs :white_check_mark:
+* Supports [Bluebird](https://github.com/petkaantonov/bluebird) :bird: promises :white_check_mark:
+
 ### How to install
 ```
 node install modern-logger
