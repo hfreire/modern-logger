@@ -15,6 +15,22 @@ const moment = require('moment')
 
 const winston = Promise.promisifyAll(require('winston'))
 
+const emoji = require('node-emoji')
+
+const emojify = (message) => {
+  if (!message) {
+    return message
+  }
+
+  const _message = message
+
+  const matches = _message.match(/:(.*):/gm) || []
+
+  matches.forEach((match) => _message.replace(`${match}`, emoji.get(match.substring(1, match.length - 1))))
+
+  return message
+}
+
 class ModernLogger {
   constructor () {
     const transports = []
@@ -39,20 +55,20 @@ class ModernLogger {
     })
 
     this.stream = {
-      write: (message) => this._logger.info(message)
+      write: (message) => this._logger.info(emojify(message))
     }
   }
 
   info (message) {
-    return this._logger.infoAsync(message)
+    return this._logger.infoAsync(emojify(message))
   }
 
   warn (message) {
-    return this._logger.warnAsync(message)
+    return this._logger.warnAsync(emojify(message))
   }
 
   error (message) {
-    return this._logger.errorAsync(message)
+    return this._logger.errorAsync(emojify(message))
   }
 }
 
