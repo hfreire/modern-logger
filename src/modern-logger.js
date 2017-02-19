@@ -22,13 +22,17 @@ const emojify = (message) => {
     return message
   }
 
-  const _message = message
+  let _message = message
 
   const matches = _message.match(/:(.*):/gm) || []
 
-  matches.forEach((match) => _message.replace(`${match}`, emoji.get(match.substring(1, match.length - 1))))
+  for (let i = 0; i < matches.length; i++) {
+    const match = matches[ i ]
+    const _emoji = emoji.get(match.substring(1, match.length - 1))
+    _message = _message.replace(`${match}`, `${_emoji} `) // node-emoji 'eats' a whitespace
+  }
 
-  return message
+  return _message
 }
 
 class ModernLogger {
