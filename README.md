@@ -13,3 +13,12 @@
 ```
 node install modern-logger
 ```
+
+### How to use
+
+#### Use it in your app
+```javascript
+const Logger = require('modern-logger')
+
+Logger.info('Launching :rocket: app to space :night_with_stars:')
+```
