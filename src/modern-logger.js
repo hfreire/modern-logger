@@ -13,7 +13,7 @@ const Promise = require('bluebird')
 
 const moment = require('moment')
 
-const winston = Promise.promisifyAll(require('winston'))
+const winston = require('winston')
 
 const emoji = require('node-emoji')
 
@@ -49,10 +49,10 @@ class ModernLogger {
       transports.push(new RollbarTransport())
     }
 
-    this._logger = new winston.Logger({
+    this._logger = Promise.promisifyAll(new winston.Logger({
       transports: transports,
       exitOnError: false
-    })
+    }))
 
     this.stream = {
       write: (message) => this._logger.info(emojify(message))
