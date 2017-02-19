@@ -5,85 +5,55 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const ENVIRONMENT = process.env.ENVIRONMENT
-const VERSION = process.env.VERSION
-const VERSION_COMMIT = process.env.VERSION_COMMIT
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
 
 const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 
-const util = require('util')
+const Promise = require('bluebird')
 
 const moment = require('moment')
-const winston = require('winston')
 
-const transports = []
+const winston = Promise.promisifyAll(require('winston'))
 
-transports.push(new winston.transports.Console({
-  level: LOG_LEVEL,
-  json: false,
-  colorize: true,
-  timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
-  handleExceptions: true,
-  humanReadableUnhandledException: true
-}))
+class ModernLogger {
+  constructor () {
+    const transports = []
 
-if (ROLLBAR_API_KEY) {
-  const rollbar = require('rollbar')
-  rollbar.init(ROLLBAR_API_KEY, {
-    environment: ENVIRONMENT,
-    branch: VERSION,
-    codeVersion: VERSION_COMMIT
-  })
+    transports.push(new winston.transports.Console({
+      level: LOG_LEVEL,
+      json: false,
+      colorize: true,
+      timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
+      handleExceptions: true,
+      humanReadableUnhandledException: true
+    }))
 
-  const RollbarLogger = function (options = {}) {
-    this.name = 'rollbar'
-    this.level = options.level || 'error'
-    this.handleExceptions = true
-    this.humanReadableUnhandledException = true
-  }
+    if (ROLLBAR_API_KEY) {
+      const RollbarTransport = require('./rollbar-transport')
+      transports.push(new RollbarTransport())
+    }
 
-  util.inherits(RollbarLogger, winston.Transport)
+    this._logger = new winston.Logger({
+      transports: transports,
+      exitOnError: false
+    })
 
-  RollbarLogger.prototype.log = function (level, msg, meta, callback) {
-    if (level === 'error') {
-      let error
-      let payload = { level }
-      if (msg !== '' && meta) {
-        error = new Error()
-        error.stack = msg
-
-        if (msg.indexOf('\n') > -1) {
-          error.message = msg.substring(7, msg.indexOf('\n'))
-        }
-
-        payload.session = meta
-      } else {
-        error = meta
-      }
-
-      rollbar.handleErrorWithPayloadData(error, payload, function (error) {
-        if (error) {
-          return callback(error)
-        } else {
-          return callback(null, true)
-        }
-      })
+    this.stream = {
+      write: (message) => this._logger.info(message)
     }
   }
 
-  transports.push(new RollbarLogger())
-}
+  info (message) {
+    return this._logger.infoAsync(message)
+  }
 
-const Logger = new winston.Logger({
-  transports: transports,
-  exitOnError: false
-})
+  warn (message) {
+    return this._logger.warnAsync(message)
+  }
 
-module.exports = Logger
-
-module.exports.stream = {
-  'write': function (message) {
-    Logger.info(message)
+  error (message) {
+    return this._logger.errorAsync(message)
   }
 }
+
+module.exports = new ModernLogger()
