@@ -2,7 +2,7 @@
   "name": "modern-logger",
   "description": "A modern logger built on top of Winston with native support for emojis and Rollbar",
   "version": "0.0.0",
-  "main": "lib/index.js",
+  "main": "lib/modern-logger.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hfreire/modern-logger.git"
@@ -50,7 +50,7 @@
     "lint": "./node_modules/.bin/eslint .",
     "coverage": "node_modules/.bin/istanbul cover --include-all-sources --root src --print detail ./node_modules/mocha/bin/_mocha -- --recursive test",
     "test": "npm run lint && npm run coverage",
-    "compile": "mkdir -p lib && ./node_modules/.bin/babel -o lib/index.js src/modern-logger.js",
+    "compile": "npm run clean && mkdir -p lib && ./node_modules/.bin/babel src/ -d lib",
     "prepublish": "npm run compile",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/.bin/coveralls",
     "semantic-release": "./node_modules/.bin/semantic-release pre && npm publish && node_modules/.bin/semantic-release post",
