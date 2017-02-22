@@ -18,7 +18,7 @@ const winston = require('winston')
 const emoji = require('node-emoji')
 
 const emojify = (message) => {
-  if (!message) {
+  if (!message || message instanceof Error) {
     return message
   }
 
@@ -63,16 +63,34 @@ class ModernLogger {
     }
   }
 
-  info (message) {
-    return this._logger.infoAsync(emojify(message))
+  info (message, ...args) {
+    const _message = emojify(message)
+
+    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
+      return this._logger.info(_message, ...args)
+    }
+
+    return this._logger.infoAsync(_message, ...args)
   }
 
-  warn (message) {
-    return this._logger.warnAsync(emojify(message))
+  warn (message, ...args) {
+    const _message = emojify(message)
+
+    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
+      return this._logger.warn(_message, ...args)
+    }
+
+    return this._logger.warnAsync(_message, ...args)
   }
 
-  error (message) {
-    return this._logger.errorAsync(emojify(message))
+  error (message, ...args) {
+    const _message = emojify(message)
+
+    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
+      return this._logger.error(_message, ...args)
+    }
+
+    return this._logger.errorAsync(_message, ...args)
   }
 }
 
