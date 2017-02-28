@@ -15,11 +15,33 @@ describe('Modern Logger', () => {
     td.reset()
   })
 
+  describe('when logging an debug message', () => {
+    const message = 'my-message'
+
+    before(() => {
+      Logger = td.object([ 'debugAsync', 'infoAsync', 'warnAsync', 'errorAsync' ])
+
+      td.replace(require('winston'), 'Logger', Logger)
+
+      subject = require('../src/modern-logger')
+    })
+
+    after(() => {
+      delete require.cache[ require.resolve('../src/modern-logger') ]
+    })
+
+    it('should invoke winstons debug logger', () => {
+      subject.debug(message)
+
+      td.verify(Logger.debugAsync(message), { times: 1 })
+    })
+  })
+
   describe('when logging an info message', () => {
     const message = 'my-message'
 
     before(() => {
-      Logger = td.object([ 'infoAsync', 'warnAsync', 'errorAsync' ])
+      Logger = td.object([ 'debugAsync', 'infoAsync', 'warnAsync', 'errorAsync' ])
 
       td.replace(require('winston'), 'Logger', Logger)
 
@@ -41,7 +63,7 @@ describe('Modern Logger', () => {
     const message = 'my-message'
 
     before(() => {
-      Logger = td.object([ 'infoAsync', 'warnAsync', 'errorAsync' ])
+      Logger = td.object([ 'debugAsync', 'infoAsync', 'warnAsync', 'errorAsync' ])
 
       td.replace(require('winston'), 'Logger', Logger)
 
@@ -63,7 +85,7 @@ describe('Modern Logger', () => {
     const message = 'my-message'
 
     before(() => {
-      Logger = td.object([ 'infoAsync', 'warnAsync', 'errorAsync' ])
+      Logger = td.object([ 'debugAsync', 'infoAsync', 'warnAsync', 'errorAsync' ])
 
       td.replace(require('winston'), 'Logger', Logger)
 
@@ -119,7 +141,7 @@ describe('Modern Logger', () => {
     const message = `my-${emojiCode}-message`
 
     before(() => {
-      Logger = td.object([ 'infoAsync', 'warnAsync', 'errorAsync' ])
+      Logger = td.object([ 'debugAsync', 'infoAsync', 'warnAsync', 'errorAsync' ])
 
       td.replace(require('winston'), 'Logger', Logger)
 

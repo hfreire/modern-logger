@@ -25,6 +25,7 @@ node install modern-logger
 #### Available environment variables
 Variable | Description | Default value
 :---:|:---:|:---:
+LOG_LEVEL | The log level verbosity | info
 ENVIRONMENT | The environment the app is running on | `not used`
 VERSION | The version of the app | `not used`
 VERSION_COMMIT | The current code commit of the app | `not used`
