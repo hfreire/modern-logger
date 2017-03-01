@@ -4,8 +4,7 @@
   ],
   "parser": "babel-eslint",
   "plugins": [
-    "mocha",
-    "node"
+    "mocha"
   ],
   "globals": {
     "describe": true,
