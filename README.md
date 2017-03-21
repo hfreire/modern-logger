@@ -37,3 +37,6 @@ const Logger = require('modern-logger')
 
 Logger.info('Launching :rocket: app to space :night_with_stars:')
 ```
+
+### Used by
+* [serverful](https://github.com/hfreire/serverful) - A kickass :muscle: web server :scream_cat: with all the bells :bell: and whistles :sparkles:

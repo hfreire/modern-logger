@@ -2,7 +2,7 @@
   "name": "modern-logger",
   "description": "A modern logger built on top of Winston with native support for emojis and Rollbar",
   "version": "0.0.0",
-  "main": "lib/modern-logger.js",
+  "main": "lib/index.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hfreire/modern-logger.git"
