@@ -9,11 +9,13 @@ const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
 
 const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 
+const _ = require('lodash')
 const Promise = require('bluebird')
 
 const moment = require('moment')
 
-const winston = require('winston')
+const { transports, Logger } = require('winston')
+const { File, Console } = transports
 
 const emoji = require('node-emoji')
 
@@ -35,31 +37,52 @@ const emojify = (message) => {
   return _message
 }
 
-class ModernLogger {
-  constructor () {
-    const transports = []
-
-    transports.push(new winston.transports.Console({
+const defaultOptions = {
+  transports: {
+    console: {
       level: LOG_LEVEL,
       json: false,
       colorize: true,
       timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
       handleExceptions: true,
       humanReadableUnhandledException: true
-    }))
+    }
+  },
+  exitOnError: false
+}
+
+class ModernLogger {
+  constructor (options = {}) {
+    this.configure(options)
+  }
+
+  configure (options = {}) {
+    this.options = _.defaults(options, defaultOptions)
+
+    const winstonOptions = _.omit(this.options, 'transports')
+    winstonOptions.transports = []
+
+    _.forEach(this.options.transports, (transport, type) => {
+      switch (type) {
+        case 'console':
+          winstonOptions.transports.push(new Console(transport))
+          break
+        case 'file':
+          winstonOptions.transports.push(new File(transport))
+          break
+        default:
+      }
+    })
 
     if (ROLLBAR_API_KEY) {
       const RollbarTransport = require('./rollbar-transport')
-      transports.push(new RollbarTransport())
+      winstonOptions.transports.push(new RollbarTransport())
     }
 
-    this._logger = Promise.promisifyAll(new winston.Logger({
-      transports: transports,
-      exitOnError: false
-    }))
+    this.logger = Promise.promisifyAll(new Logger(winstonOptions))
 
     this.stream = {
-      write: (message) => this._logger.info(emojify(message))
+      write: (message) => this.logger.info(emojify(message))
     }
   }
 
@@ -67,40 +90,40 @@ class ModernLogger {
     const _message = emojify(message)
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this._logger.info(_message, ...args)
+      return this.logger.info(_message, ...args)
     }
 
-    return this._logger.debugAsync(_message, ...args)
+    return this.logger.debugAsync(_message, ...args)
   }
 
   info (message, ...args) {
     const _message = emojify(message)
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this._logger.info(_message, ...args)
+      return this.logger.info(_message, ...args)
     }
 
-    return this._logger.infoAsync(_message, ...args)
+    return this.logger.infoAsync(_message, ...args)
   }
 
   warn (message, ...args) {
     const _message = emojify(message)
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this._logger.warn(_message, ...args)
+      return this.logger.warn(_message, ...args)
     }
 
-    return this._logger.warnAsync(_message, ...args)
+    return this.logger.warnAsync(_message, ...args)
   }
 
   error (message, ...args) {
     const _message = emojify(message)
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this._logger.error(_message, ...args)
+      return this.logger.error(_message, ...args)
     }
 
-    return this._logger.errorAsync(_message, ...args)
+    return this.logger.errorAsync(_message, ...args)
   }
 }
 

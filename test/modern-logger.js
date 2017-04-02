@@ -23,6 +23,19 @@ describe('Modern Logger', () => {
 
   afterEach(() => td.reset())
 
+  describe('when constructing', () => {
+    beforeEach(() => {
+      subject = require('../src/modern-logger')
+    })
+
+    it('should create a winston logger instance with properties', () => {
+      subject.logger.should.have.deep.property('.debug')
+      subject.logger.should.have.deep.property('.info')
+      subject.logger.should.have.deep.property('.warn')
+      subject.logger.should.have.deep.property('.error')
+    })
+  })
+
   describe('when logging an debug message', () => {
     const message = 'my-message'
 
