@@ -39,16 +39,19 @@ const emojify = (message) => {
 
 const defaultOptions = {
   transports: {
-    console: {
-      level: LOG_LEVEL,
-      json: false,
-      colorize: true,
-      timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
-      handleExceptions: true,
-      humanReadableUnhandledException: true
-    }
+    console: [ {} ]
   },
+  enableEmoji: true,
   exitOnError: false
+}
+
+const defaultTransportOptions = {
+  level: LOG_LEVEL,
+  json: false,
+  colorize: true,
+  timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
+  handleExceptions: true,
+  humanReadableUnhandledException: true
 }
 
 class ModernLogger {
@@ -62,16 +65,18 @@ class ModernLogger {
     const winstonOptions = _.omit(this.options, 'transports')
     winstonOptions.transports = []
 
-    _.forEach(this.options.transports, (transport, type) => {
-      switch (type) {
-        case 'console':
-          winstonOptions.transports.push(new Console(transport))
-          break
-        case 'file':
-          winstonOptions.transports.push(new File(transport))
-          break
-        default:
-      }
+    _.forEach(this.options.transports, (transports, type) => {
+      _.forEach(transports, (transport) => {
+        switch (type) {
+          case 'console':
+            winstonOptions.transports.push(new Console(_.defaults(transport, defaultTransportOptions)))
+            break
+          case 'file':
+            winstonOptions.transports.push(new File(_.defaults(transport, defaultTransportOptions)))
+            break
+          default:
+        }
+      })
     })
 
     if (ROLLBAR_API_KEY) {
@@ -87,7 +92,7 @@ class ModernLogger {
   }
 
   debug (message, ...args) {
-    const _message = emojify(message)
+    const _message = this.options.enableEmoji ? emojify(message) : message
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
       return this.logger.info(_message, ...args)
@@ -97,7 +102,7 @@ class ModernLogger {
   }
 
   info (message, ...args) {
-    const _message = emojify(message)
+    const _message = this.options.enableEmoji ? emojify(message) : message
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
       return this.logger.info(_message, ...args)
@@ -107,7 +112,7 @@ class ModernLogger {
   }
 
   warn (message, ...args) {
-    const _message = emojify(message)
+    const _message = this.options.enableEmoji ? emojify(message) : message
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
       return this.logger.warn(_message, ...args)
@@ -117,7 +122,7 @@ class ModernLogger {
   }
 
   error (message, ...args) {
-    const _message = emojify(message)
+    const _message = this.options.enableEmoji ? emojify(message) : message
 
     if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
       return this.logger.error(_message, ...args)
