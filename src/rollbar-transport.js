@@ -12,11 +12,14 @@ const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 
 const Transport = require('winston').Transport
 
-const rollbar = require('rollbar')
-rollbar.init(ROLLBAR_API_KEY, {
+const Rollbar = require('rollbar')
+const rollbar = new Rollbar({
+  accessToken: ROLLBAR_API_KEY,
   environment: ENVIRONMENT,
   branch: VERSION,
-  codeVersion: VERSION_COMMIT
+  codeVersion: VERSION_COMMIT,
+  handleUncaughtExceptions: true,
+  handleUnhandledRejections: true
 })
 
 class RollbarTransport extends Transport {
@@ -46,7 +49,7 @@ class RollbarTransport extends Transport {
         error = meta
       }
 
-      rollbar.handleErrorWithPayloadData(error, payload, function (error) {
+      rollbar.error(error, payload, function (error) {
         if (error) {
           return callback(error)
         } else {
