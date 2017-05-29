@@ -19,6 +19,16 @@ const { File, Console } = transports
 
 const emoji = require('node-emoji')
 
+const log = function (level, message, ...args) {
+  const _message = this._options.enableEmoji ? emojify(message) : message
+
+  if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
+    return this._logger[ level ](_message, ...args)
+  }
+
+  return this._logger[ `${level}Async` ](_message, ...args)
+}
+
 const emojify = (message) => {
   if (!message || message instanceof Error) {
     return message
@@ -38,11 +48,14 @@ const emojify = (message) => {
 }
 
 const defaultOptions = {
+  winston: {
+    transports: [],
+    exitOnError: false
+  },
   transports: {
     console: [ {} ]
   },
-  enableEmoji: true,
-  exitOnError: false
+  enableEmoji: true
 }
 
 const defaultTransportOptions = {
@@ -59,20 +72,21 @@ class ModernLogger {
     this.configure(options)
   }
 
+  get logger () {
+    return this._logger
+  }
+
   configure (options = {}) {
-    this.options = _.defaults(options, defaultOptions)
+    this._options = _.defaults(options, defaultOptions)
 
-    const winstonOptions = _.omit(this.options, 'transports')
-    winstonOptions.transports = []
-
-    _.forEach(this.options.transports, (transports, type) => {
+    _.forEach(this._options.transports, (transports, type) => {
       _.forEach(transports, (transport) => {
         switch (type) {
           case 'console':
-            winstonOptions.transports.push(new Console(_.defaults(transport, defaultTransportOptions)))
+            this._options.winston.transports.push(new Console(_.defaults(transport, defaultTransportOptions)))
             break
           case 'file':
-            winstonOptions.transports.push(new File(_.defaults(transport, defaultTransportOptions)))
+            this._options.winston.transports.push(new File(_.defaults(transport, defaultTransportOptions)))
             break
           default:
         }
@@ -81,54 +95,30 @@ class ModernLogger {
 
     if (ROLLBAR_API_KEY) {
       const RollbarTransport = require('./rollbar-transport')
-      winstonOptions.transports.push(new RollbarTransport())
+      this._options.winston.transports.push(new RollbarTransport())
     }
 
-    this.logger = Promise.promisifyAll(new Logger(winstonOptions))
+    this._logger = Promise.promisifyAll(new Logger(this._options.winston))
 
     this.stream = {
-      write: (message) => this.logger.info(emojify(message))
+      write: (message) => this._logger.info(emojify(message))
     }
   }
 
   debug (message, ...args) {
-    const _message = this.options.enableEmoji ? emojify(message) : message
-
-    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this.logger.info(_message, ...args)
-    }
-
-    return this.logger.debugAsync(_message, ...args)
+    return log.bind(this)('debug', message, ...args)
   }
 
   info (message, ...args) {
-    const _message = this.options.enableEmoji ? emojify(message) : message
-
-    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this.logger.info(_message, ...args)
-    }
-
-    return this.logger.infoAsync(_message, ...args)
+    return log.bind(this)('info', message, ...args)
   }
 
   warn (message, ...args) {
-    const _message = this.options.enableEmoji ? emojify(message) : message
-
-    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this.logger.warn(_message, ...args)
-    }
-
-    return this.logger.warnAsync(_message, ...args)
+    return log.bind(this)('warn', message, ...args)
   }
 
   error (message, ...args) {
-    const _message = this.options.enableEmoji ? emojify(message) : message
-
-    if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
-      return this.logger.error(_message, ...args)
-    }
-
-    return this.logger.errorAsync(_message, ...args)
+    return log.bind(this)('error', message, ...args)
   }
 }
 
