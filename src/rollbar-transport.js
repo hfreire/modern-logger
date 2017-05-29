@@ -13,14 +13,6 @@ const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 const Transport = require('winston').Transport
 
 const Rollbar = require('rollbar')
-const rollbar = new Rollbar({
-  accessToken: ROLLBAR_API_KEY,
-  environment: ENVIRONMENT,
-  branch: VERSION,
-  codeVersion: VERSION_COMMIT,
-  handleUncaughtExceptions: true,
-  handleUnhandledRejections: true
-})
 
 class RollbarTransport extends Transport {
   constructor (options = {}) {
@@ -30,18 +22,31 @@ class RollbarTransport extends Transport {
     this.level = options.level || 'error'
     this.handleExceptions = true
     this.humanReadableUnhandledException = true
+
+    this._rollbar = new Rollbar({
+      accessToken: ROLLBAR_API_KEY,
+      environment: ENVIRONMENT,
+      branch: VERSION,
+      codeVersion: VERSION_COMMIT,
+      handleUncaughtExceptions: true,
+      handleUnhandledRejections: true
+    })
   }
 
-  log (level, msg, meta, callback) {
+  get rollbar () {
+    return this._rollbar
+  }
+
+  log (level, stack, meta, callback) {
     if (level === 'error') {
       let error
       let payload = { level }
-      if (msg !== '' && meta) {
+      if (stack !== '' && meta) {
         error = new Error()
-        error.stack = msg
+        error.stack = stack
 
-        if (msg.indexOf('\n') > -1) {
-          error.message = msg.substring(7, msg.indexOf('\n'))
+        if (stack.indexOf('\n') > -1) {
+          error.message = stack.substring(7, stack.indexOf('\n'))
         }
 
         payload.session = meta
@@ -49,7 +54,7 @@ class RollbarTransport extends Transport {
         error = meta
       }
 
-      rollbar.error(error, payload, function (error) {
+      this._rollbar.error(error, payload, function (error) {
         if (error) {
           return callback(error)
         } else {
