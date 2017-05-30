@@ -54,7 +54,7 @@ class RollbarTransport extends Transport {
         error = meta
       }
 
-      this._rollbar.error(error, payload, function (error) {
+      this._rollbar.error(error, null, payload, function (error) {
         if (error) {
           return callback(error)
         } else {
