@@ -63,8 +63,8 @@ const defaultTransportOptions = {
   json: false,
   colorize: true,
   timestamp: () => moment().format('YYYY-MM-DDTHH:mm:ss,SSSZ'),
-  handleExceptions: true,
-  humanReadableUnhandledException: true
+  handleExceptions: false,
+  humanReadableUnhandledException: false
 }
 
 class ModernLogger {

@@ -20,16 +20,16 @@ class RollbarTransport extends Transport {
 
     this.name = 'rollbar'
     this.level = options.level || 'error'
-    this.handleExceptions = true
-    this.humanReadableUnhandledException = true
+    this.handleExceptions = false // catch and log uncaughtException
+    this.humanReadableUnhandledException = false
 
     this._rollbar = new Rollbar({
       accessToken: ROLLBAR_API_KEY,
       environment: ENVIRONMENT,
       branch: VERSION,
       codeVersion: VERSION_COMMIT,
-      handleUncaughtExceptions: true,
-      handleUnhandledRejections: true
+      handleUncaughtExceptions: false,
+      handleUnhandledRejections: false
     })
   }
 
