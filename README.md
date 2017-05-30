@@ -17,7 +17,7 @@
 
 ### How to install
 ```
-node install modern-logger
+npm install modern-logger
 ```
 
 ### How to use
