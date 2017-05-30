@@ -36,7 +36,7 @@ describe('Rollbar Transport', () => {
       callback = td.function()
 
       td.replace('rollbar', Rollbar)
-      td.when(Rollbar.prototype.error(td.matchers.anything(), td.matchers.anything()), { ignoreExtraArgs: true }).thenCallback()
+      td.when(Rollbar.prototype.error(td.matchers.anything(), td.matchers.anything(), td.matchers.anything()), { ignoreExtraArgs: true }).thenCallback()
 
       const RollbarTransport = require('../src/rollbar-transport')
       subject = new RollbarTransport()
@@ -68,7 +68,7 @@ describe('Rollbar Transport', () => {
       callback = td.function()
 
       td.replace('rollbar', Rollbar)
-      td.when(Rollbar.prototype.error(td.matchers.anything(), td.matchers.anything()), { ignoreExtraArgs: true }).thenCallback()
+      td.when(Rollbar.prototype.error(td.matchers.anything(), td.matchers.anything(), td.matchers.anything()), { ignoreExtraArgs: true }).thenCallback()
 
       const RollbarTransport = require('../src/rollbar-transport')
       subject = new RollbarTransport()
