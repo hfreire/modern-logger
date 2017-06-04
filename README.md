@@ -22,6 +22,13 @@ npm install modern-logger
 
 ### How to use
 
+#### Use it in your app
+```javascript
+const Logger = require('modern-logger')
+
+Logger.info('Launching :rocket: app to space :night_with_stars:')
+```
+
 #### Available environment variables
 Variable | Description | Default value
 :---:|:---:|:---:
@@ -30,13 +37,6 @@ ENVIRONMENT | The environment the app is running on | `undefined`
 VERSION | The version of the app | `undefined`
 VERSION_COMMIT | The current code commit of the app | `undefined`
 ROLLBAR_API_KEY | The server API key used to talk with Rollbar | `undefined`
-
-#### Use it in your app
-```javascript
-const Logger = require('modern-logger')
-
-Logger.info('Launching :rocket: app to space :night_with_stars:')
-```
 
 ### Used by
 * [serverful](https://github.com/hfreire/serverful) - A kickass :muscle: web server :scream_cat: with all the bells :bell: and whistles :sparkles:
