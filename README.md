@@ -30,13 +30,13 @@ Logger.info('Launching :rocket: app to space :night_with_stars:')
 ```
 
 #### Available environment variables
-Variable | Description | Default value
-:---:|:---:|:---:
-LOG_LEVEL | The log level verbosity | `info`
-ENVIRONMENT | The environment the app is running on | `undefined`
-VERSION | The version of the app | `undefined`
-VERSION_COMMIT | The current code commit of the app | `undefined`
-ROLLBAR_API_KEY | The server API key used to talk with Rollbar | `undefined`
+Variable | Description | Required | Default value
+:---:|:---:|:---:|:---:
+LOG_LEVEL | The log level verbosity | false | `info`
+ENVIRONMENT | The environment the app is running on | false | `undefined`
+VERSION | The version of the app | false | `undefined`
+VERSION_COMMIT | The current code commit of the app | false | `undefined`
+ROLLBAR_API_KEY | The server API key used to talk with Rollbar | false | `undefined`
 
 ### Used by
 * [serverful](https://github.com/hfreire/serverful) - A kickass :muscle: web server :scream_cat: with all the bells :bell: and whistles :sparkles:
