@@ -17,7 +17,7 @@
     "bluebird": "3.5.0",
     "lodash": "4.17.4",
     "moment": "2.18.1",
-    "node-emoji": "1.7.0",
+    "node-emoji": "1.8.0",
     "rollbar": "2.1.0",
     "winston": "2.3.1"
   },
