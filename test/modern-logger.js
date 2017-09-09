@@ -29,10 +29,10 @@ describe('Modern Logger', () => {
     })
 
     it('should create a winston logger instance with properties', () => {
-      subject.logger.should.have.deep.property('.debug')
-      subject.logger.should.have.deep.property('.info')
-      subject.logger.should.have.deep.property('.warn')
-      subject.logger.should.have.deep.property('.error')
+      subject.logger.should.have.nested.property('.debug')
+      subject.logger.should.have.nested.property('.info')
+      subject.logger.should.have.nested.property('.warn')
+      subject.logger.should.have.nested.property('.error')
     })
   })
 
