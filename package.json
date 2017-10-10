@@ -16,7 +16,7 @@
   "dependencies": {
     "bluebird": "3.5.1",
     "lodash": "4.17.4",
-    "moment": "2.18.1",
+    "moment": "2.19.0",
     "node-emoji": "1.8.1",
     "rollbar": "2.2.9",
     "winston": "2.4.0"
