@@ -68,6 +68,48 @@ describe('Modern Logger', () => {
     })
   })
 
+  describe('when logging an info message with an emoji', () => {
+    let emojiId = 'my-emoji-id'
+    let emojiCode = `:${emojiId}:`
+    const message = `my-${emojiCode}-message`
+
+    beforeEach(() => {
+      td.replace('winston', winston)
+
+      td.replace('node-emoji', emoji)
+
+      subject = require('../src/modern-logger')
+    })
+
+    it('should invoke emoji with emoji id', () => {
+      subject.info(message)
+
+      const captor = td.matchers.captor()
+
+      td.verify(emoji.get(captor.capture()), { times: 1 })
+
+      const _emojiId = captor.value
+
+      _emojiId.should.be.equal(emojiId)
+    })
+  })
+
+  describe('when logging an info plain object', () => {
+    const object = {}
+
+    beforeEach(() => {
+      td.replace('winston', winston)
+
+      subject = require('../src/modern-logger')
+    })
+
+    it('should invoke winstons info logger with object', () => {
+      subject.info(object)
+
+      td.verify(winston.Logger.prototype.info(object), { ignoreExtraArgs: true, times: 1 })
+    })
+  })
+
   describe('when logging a warning message', () => {
     const message = 'my-message'
 
@@ -100,6 +142,22 @@ describe('Modern Logger', () => {
     })
   })
 
+  describe('when logging an error object', () => {
+    const error = new Error('my-error-message')
+
+    beforeEach(() => {
+      td.replace('winston', winston)
+
+      subject = require('../src/modern-logger')
+    })
+
+    it('should invoke winstons error logger with error', () => {
+      subject.error(error)
+
+      td.verify(winston.Logger.prototype.error(error), { ignoreExtraArgs: true, times: 1 })
+    })
+  })
+
   describe('when Rollbar API key available', () => {
     let winston
 
@@ -126,32 +184,6 @@ describe('Modern Logger', () => {
       const options = captor.value
 
       options.transports.should.have.length(2)
-    })
-  })
-
-  describe('when logging an info message with an emoji', () => {
-    let emojiId = 'my-emoji-id'
-    let emojiCode = `:${emojiId}:`
-    const message = `my-${emojiCode}-message`
-
-    beforeEach(() => {
-      td.replace('winston', winston)
-
-      td.replace('node-emoji', emoji)
-
-      subject = require('../src/modern-logger')
-    })
-
-    it('should invoke emoji with emoji id', () => {
-      subject.info(message)
-
-      const captor = td.matchers.captor()
-
-      td.verify(emoji.get(captor.capture()), { times: 1 })
-
-      const _emojiId = captor.value
-
-      _emojiId.should.be.equal(emojiId)
     })
   })
 })

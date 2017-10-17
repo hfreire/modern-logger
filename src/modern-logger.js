@@ -30,7 +30,7 @@ const log = function (level, message, ...args) {
 }
 
 const emojify = (message) => {
-  if (!message || message instanceof Error) {
+  if (!message || _.isObject(message)) {
     return message
   }
 
