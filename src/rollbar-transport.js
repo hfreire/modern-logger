@@ -19,7 +19,7 @@ class RollbarTransport extends Transport {
     super()
 
     this.name = 'rollbar'
-    this.level = options.level || 'error'
+    this.level = options.level || 'warn'
     this.handleExceptions = false // catch and log uncaughtException
     this.humanReadableUnhandledException = false
 
@@ -38,7 +38,7 @@ class RollbarTransport extends Transport {
   }
 
   log (level, stack, meta, callback) {
-    if (level === 'error') {
+    if (level === 'error' || level === 'warn') {
       let error
       let payload = { level }
       if (stack !== '' && meta) {
@@ -46,7 +46,7 @@ class RollbarTransport extends Transport {
         error.stack = stack
 
         if (stack.indexOf('\n') > -1) {
-          error.message = stack.substring(7, stack.indexOf('\n'))
+          error.message = stack.substring(stack.indexOf(': ') + 2, stack.indexOf('\n'))
         }
 
         payload.session = meta
