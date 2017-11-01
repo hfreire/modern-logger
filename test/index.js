@@ -5,17 +5,24 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-const Logger = require('../src/modern-logger')
-
 describe('Module', () => {
   let subject
+  let Logger
+
+  before(() => {
+    Logger = td.object([])
+  })
+
+  afterEach(() => td.reset())
 
   describe('when loading', () => {
     beforeEach(() => {
+      td.replace('../src/modern-logger', Logger)
+
       subject = require('../src/index')
     })
 
-    it('should export modern logger', () => {
+    it('should export logger', () => {
       subject.should.be.equal(Logger)
     })
   })
