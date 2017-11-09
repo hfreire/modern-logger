@@ -9,6 +9,8 @@
 [![Version](https://img.shields.io/npm/v/modern-logger.svg)](https://www.npmjs.com/package/modern-logger)
 [![Downloads](https://img.shields.io/npm/dt/modern-logger.svg)](https://www.npmjs.com/package/modern-logger) 
 
+> A modern logger :page_with_curl: built on top of Winston with native support for emojis and Rollbar
+
 ### Features
 * Uses [Winston](https://github.com/winstonjs/winston) logging library under the hood
 * Enable [Rollbar](https://rollbar.com) error tracking service as a transport from the environment :white_check_mark: 
