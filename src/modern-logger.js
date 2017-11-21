@@ -6,7 +6,6 @@
  */
 
 const LOG_LEVEL = process.env.LOG_LEVEL || 'info'
-
 const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 
 const _ = require('lodash')

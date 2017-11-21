@@ -10,27 +10,37 @@ const VERSION = process.env.VERSION
 const VERSION_COMMIT = process.env.VERSION_COMMIT
 const ROLLBAR_API_KEY = process.env.ROLLBAR_API_KEY
 
+const _ = require('lodash')
+
 const Transport = require('winston').Transport
 
 const Rollbar = require('rollbar')
 
+const defaultOptions = {
+  winston: {
+    name: 'rollbar',
+    level: 'warn',
+    handleExceptions: false,
+    humanReadableUnhandledException: false
+  },
+  rollbar: {
+    accessToken: ROLLBAR_API_KEY,
+    verbose: false,
+    environment: ENVIRONMENT,
+    branch: VERSION,
+    codeVersion: VERSION_COMMIT,
+    handleUncaughtExceptions: false,
+    handleUnhandledRejections: false
+  }
+}
+
 class RollbarTransport extends Transport {
   constructor (options = {}) {
-    super()
+    super(_.get(_.defaultsDeep({}, options, defaultOptions), 'winston'))
 
-    this.name = 'rollbar'
-    this.level = options.level || 'warn'
-    this.handleExceptions = false // catch and log uncaughtException
-    this.humanReadableUnhandledException = false
+    this._options = _.defaultsDeep({}, options, defaultOptions)
 
-    this._rollbar = new Rollbar({
-      accessToken: ROLLBAR_API_KEY,
-      environment: ENVIRONMENT,
-      branch: VERSION,
-      codeVersion: VERSION_COMMIT,
-      handleUncaughtExceptions: false,
-      handleUnhandledRejections: false
-    })
+    this._rollbar = new Rollbar(_.get(this._options, 'rollbar'))
   }
 
   get rollbar () {
@@ -38,30 +48,26 @@ class RollbarTransport extends Transport {
   }
 
   log (level, stack, meta, callback) {
-    if (level === 'error' || level === 'warn') {
-      let error
-      let payload = { level }
-      if (stack !== '' && meta) {
-        error = new Error()
-        error.stack = stack
+    if (level !== 'error' && level !== 'warn') {
+      return callback()
+    }
 
-        if (stack.indexOf('\n') > -1) {
-          error.message = stack.substring(stack.indexOf(': ') + 2, stack.indexOf('\n'))
-        }
+    let error
+    let payload = { level }
+    if (stack !== '' && meta) {
+      error = new Error()
+      error.stack = stack
 
-        payload.session = meta
-      } else {
-        error = meta
+      if (stack.indexOf('\n') > -1) {
+        error.message = stack.substring(stack.indexOf(': ') + 2, stack.indexOf('\n'))
       }
 
-      this._rollbar.error(error, null, payload, function (error) {
-        if (error) {
-          return callback(error)
-        } else {
-          return callback(null, true)
-        }
-      })
+      payload.session = meta
+    } else {
+      error = meta
     }
+
+    return this._rollbar.error(error, null, payload, () => callback(null, true))
   }
 }
 
