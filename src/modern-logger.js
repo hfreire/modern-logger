@@ -19,7 +19,7 @@ const { File, Console } = transports
 const emoji = require('node-emoji')
 
 const log = function (level, message, ...args) {
-  const _message = this._options.enableEmoji ? emojify(message) : message
+  const _message = _.get(this._options, 'enableEmoji') ? emojify(message) : message
 
   if (args.length > 0 && args[ args.length - 1 ] instanceof Function) {
     return this._logger[ level ](_message, ...args)
@@ -76,7 +76,7 @@ class ModernLogger {
   }
 
   configure (options = {}) {
-    this._options = _.defaults(options, defaultOptions)
+    this._options = _.defaultsDeep({}, options, defaultOptions)
 
     _.forEach(this._options.transports, (transports, type) => {
       _.forEach(transports, (transport) => {
