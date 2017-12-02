@@ -19,7 +19,7 @@
   "dependencies": {
     "bluebird": "3.5.1",
     "lodash": "4.17.4",
-    "moment": "2.19.2",
+    "moment": "2.19.3",
     "node-emoji": "1.8.1",
     "rollbar": "2.3.1",
     "winston": "2.4.0"
@@ -30,8 +30,8 @@
     "chai": "4.1.2",
     "chai-as-promised": "7.1.1",
     "coveralls": "2.13.3",
-    "eslint": "4.11.0",
-    "eslint-config-hfreire": "1.0.9",
+    "eslint": "4.12.1",
+    "eslint-config-hfreire": "1.0.10",
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-json": "1.2.0",
     "eslint-plugin-mocha": "4.11.0",
