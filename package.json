@@ -21,7 +21,7 @@
     "lodash": "4.17.4",
     "moment": "2.20.1",
     "node-emoji": "1.8.1",
-    "rollbar": "2.3.5",
+    "rollbar": "2.3.6",
     "winston": "2.4.0"
   },
   "devDependencies": {
