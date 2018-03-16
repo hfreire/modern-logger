@@ -22,7 +22,7 @@
     "moment": "2.21.0",
     "node-emoji": "1.8.1",
     "rollbar": "2.3.9",
-    "winston": "2.4.1"
+    "winston": "3.0.0-rc3"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
