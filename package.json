@@ -18,7 +18,7 @@
   "homepage": "https://github.com/hfreire/modern-logger#readme",
   "dependencies": {
     "bluebird": "3.5.2",
-    "lodash": "4.17.9",
+    "lodash": "4.17.11",
     "moment": "2.22.2",
     "node-emoji": "1.8.1",
     "rollbar": "2.4.6",
