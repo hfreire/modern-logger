@@ -11,7 +11,7 @@ git clone https://github.com/my-github-username/modern-logger
 
 Change current directory
 ```
-cd get-me-date
+cd modern-logger
 ```
 
 Install NPM dependencies
